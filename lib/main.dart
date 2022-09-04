@@ -1,15 +1,31 @@
-import 'dart:convert';
-
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:signum_lgre/addBook.dart';
+import 'package:nsd/nsd.dart';
+
+import 'chooseServer.dart';
+import 'mainScreen.dart';
 
 
 void main() {
-  runApp(const MyApp());
+  Dio dio =  Dio(BaseOptions(
+      connectTimeout: 10000,  // in ms
+      receiveTimeout: 10000,
+      sendTimeout: 10000,
+      responseType: ResponseType.plain,
+      followRedirects: false,
+      validateStatus: (status) { return true; }
+  ));
+  dio.interceptors.add(CookieManager(CookieJar()));
+
+  runApp(MyApp(dio: dio));
+
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key,required this.dio}) : super(key: key);
+  final Dio dio;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,62 +33,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
-      home: const MyHomePage(title: 'SignumLGRE'),
+      // home: const MyHomePage(title: 'SignumLGRE'),
+      home: ChooseServer(dio: dio),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  String _counter = "";
-
-
-  void _incrementCounter() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddBook()),
-    );
-    // Book book = await fetchBook(barcodeScanRes);
-    // print();
-    setState(() {
-      // _counter = book.title;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              _counter,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}

@@ -27,7 +27,7 @@ class Book {
       authors: List<String>.from(json["authors"]),
       publisher: json["publisher"],
       pubDate: json["pubDate"],
-      msrp: json["msrp"],
+      msrp: json["msrp"].toDouble(),
       image: json["image"],
     );
   }

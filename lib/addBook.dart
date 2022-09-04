@@ -1,8 +1,8 @@
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:signum_lgre/models/book.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 class AddBook extends StatefulWidget {
   const AddBook({Key? key}) : super(key: key);
@@ -12,21 +12,24 @@ class AddBook extends StatefulWidget {
   State<AddBook> createState() => _AddBookState();
 }
 class _AddBookState extends State<AddBook> {
+
+
   bool fetchedBook = false;
   Image fetchedImage = Image.memory(Base64Codec().decode("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7".split(',').last),height: 1,);
   Future<Book> fetchBook(String isbn) async {
-    final response = await http
-        .get(Uri.parse('http://192.168.8.189:3000/book/fromisbn?isbn=$isbn')).timeout(const Duration(seconds: 20));;
-
-    if (response.statusCode == 200) {
+    return Book(title: "title", isbn: 55, authors: ["authors"], publisher: "publisher", pubDate: 2, msrp: 3, image: "image");
+    // final response = await http
+    //     .get(Uri.parse('http://192.168.8.189:3000/book/fromisbn?isbn=$isbn')).timeout(const Duration(seconds: 20));
+    //
+    // if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      return Book.fromJson(jsonDecode(response.body));
-    } else {
+      // return Book.fromJson(jsonDecode(response.body));
+    // } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load album');
-    }
+      // throw Exception('Failed to load album');
+    // }
   }
   TextEditingController ISBNController = TextEditingController();
   TextEditingController bookNameController = TextEditingController();
@@ -64,9 +67,9 @@ class _AddBookState extends State<AddBook> {
         appBar: AppBar(
           title: Text("Add Book"),
         ),
-      body: Container(
+      body: SingleChildScrollView(child: Container(
         margin: EdgeInsets.all(40),
-        child: Column(
+        child:    Column(
           children: [
             Row(
               children: [Text("Book Information",  textAlign: TextAlign.left,
@@ -197,7 +200,7 @@ class _AddBookState extends State<AddBook> {
               ],
             )
           ],
-        )
+        ),)
       )
     );
   }
